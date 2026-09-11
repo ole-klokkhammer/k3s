@@ -1,0 +1,23 @@
+name: transcription
+description: A profile for running transcription utilities on a GPU worker with local models.
+config:
+  user.host: "core"
+  limits.cpu: "16"
+  limits.cpu.nodes: "0,1,2,3"
+  limits.memory: 64GB
+  limits.kernel.memlock: unlimited
+  limits.memory.swap: "false"
+devices:
+  eth0:
+    name: eth0
+    nictype: bridged
+    parent: br0
+    type: nic
+  gpu:
+    type: gpu
+    gputype: physical
+    id: nvidia.com/gpu=0
+  root:
+    path: /
+    pool: zpool
+    type: disk

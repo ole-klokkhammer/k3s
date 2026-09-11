@@ -1,0 +1,84 @@
+version: 0.17-0
+
+mqtt:
+  enabled: true
+  host: hivemq.homelan
+
+detectors:
+  onnx:
+    type: onnx
+
+ffmpeg:
+  hwaccel_args: preset-nvidia
+
+model:
+  model_type: rfdetr
+  width: 320
+  height: 320
+  input_tensor: nchw
+  input_dtype: float
+  path: /config/rfdetr-Medium.onnx
+
+audio:
+  enabled: true
+  listen:
+    - bark
+    - fire_alarm
+    - scream
+    - speech
+    - yell
+    - cat
+    - purr
+    - meow
+    - hiss
+
+record:
+  enabled: true
+  continuous:
+    days: 3
+  motion:
+    days: 7
+  alerts:
+    retain:
+      days: 30
+      mode: all
+  detections:
+    retain:
+      days: 30
+      mode: all
+
+birdseye:
+  enabled: True
+  mode: continuous
+
+go2rtc:
+  enabled: true
+  streams:
+    entrance_roof: "rtsp://go2rtc.homelan:8554/entrance_roof"
+    entrance_roof_sub: "rtsp://go2rtc.homelan:8554/entrance_roof_sub"
+
+cameras:
+  main_hallway:
+    enabled: true
+    audio:
+      enabled: true
+    detect:
+      enabled: true
+      width: 1920
+      height: 1080
+      fps: 10
+    ffmpeg:
+      hwaccel_args: "-hwaccel_device 0 -hwaccel cuda"
+      inputs:
+        - path: "rtsp://go2rtc.homelan:8554/entrance_roof"
+          roles:
+            - record
+        - path: "rtsp://go2rtc.homelan:8554/entrance_roof_sub"
+          roles:
+            - detect
+            - audio
+
+    live:
+      streams:
+        Hallway Main: entrance_roof
+        Hallway Sub: entrance_roof_sub

@@ -10,7 +10,11 @@ devices:
     nictype: bridged
     parent: br0
     type: nic
-    hwaddr: 00:16:3e:22:cb:3d
+    hwaddr: 00:16:3e:22:cb:3d 
+  gpu:
+    type: gpu
+    gputype: physical
+    id: nvidia.com/gpu=0
   root:
     path: /
     pool: zpool

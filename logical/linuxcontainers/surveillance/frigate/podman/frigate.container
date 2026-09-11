@@ -13,7 +13,9 @@ Volume=/media/frigate:/media/frigate:rw
 Volume=/etc/localtime:/etc/localtime:ro
 Mount=type=tmpfs,target=/tmp/cache,tmpfs-size=1000000000
 Environment=TZ=Europe/Oslo
-Environment=OMP_NUM_THREADS=4
+Environment=NVIDIA_VISIBLE_DEVICES=all
+Environment=NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+EnvironmentFile=/config/frigate.env
 
 [Service]
 Restart=always

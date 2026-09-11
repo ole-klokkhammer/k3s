@@ -17,15 +17,15 @@ Exec=sh -c 'numactl --interleave=all sglang serve \
     --speculative-algorithm DSPARK \
     --speculative-draft-model-path /models/qwen3.8/gittensor-model-hub_Qwen3.8-27B-DSpark-NVFP4 \
     --speculative-draft-model-quantization modelopt_fp4 \
-    --speculative-dspark-block-size 6 \
+    --speculative-dspark-block-size 5 \
     --kv-cache-dtype fp8_e4m3 \
     --quantization modelopt_fp4 \
     --attention-backend flashinfer \
     --cuda-graph-backend-prefill disabled \
-    --mem-fraction-static 0.90 \
+    --mem-fraction-static 0.92 \
     --max-running-requests 2 \
     --mamba-backend flashinfer \
-    --max-mamba-cache-size 10 \
+    --max-mamba-cache-size 16 \
     --mamba-radix-cache-strategy extra_buffer_lazy \
     --mamba-ssm-dtype bfloat16 \
     --mm-feature-transport cpu \

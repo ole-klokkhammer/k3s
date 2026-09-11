@@ -1,0 +1,23 @@
+log:
+  level: info
+
+api:
+  listen: ":1984"
+
+ffmpeg:
+  hwaccel_args: preset-nvidia
+  gpu: 0
+
+webrtc:
+  # Allow external access
+  listen: :8555
+  allow_talk: true
+  candidates:
+    - go2rtc-webrtc.camera-bridge:8555
+
+# https://github.com/AlexxIT/go2rtc/wiki/Hardware-acceleration
+streams:
+  entrance_roof: 
+    - "ffmpeg:http://${CAMERA_ENTRANCE_ROOF}/flv?port=1935&app=bcs&stream=channel0_main.bcs&user=${CAMERA_ENTRANCE_ROOF_USER}&password=${CAMERA_ENTRANCE_ROOF_PASSWORD}#video=copy#audio=opus#hardware"
+  entrance_roof_sub: 
+    - "ffmpeg:http://${CAMERA_ENTRANCE_ROOF}/flv?port=1935&app=bcs&stream=channel0_sub.bcs&user=${CAMERA_ENTRANCE_ROOF_USER}&password=${CAMERA_ENTRANCE_ROOF_PASSWORD}#video=copy#audio=opus#hardware"

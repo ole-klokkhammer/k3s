@@ -1,0 +1,25 @@
+
+[Unit]
+Description=go2rtc streaming server
+After=network-online.target 
+
+[Container]
+Network=host
+ContainerName=go2rtc
+Image=ghcr.io/alexxit/go2rtc:master-hardware
+AddDevice=nvidia.com/gpu=all
+Volume=/config:/config:ro
+Volume=/etc/localtime:/etc/localtime:ro
+Environment=TZ=Europe/Oslo
+Environment=NVIDIA_VISIBLE_DEVICES=all
+Environment=NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+EnvironmentFile=/config/go2rtc.env
+
+[Service]
+Restart=always
+TimeoutStopSec=15
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

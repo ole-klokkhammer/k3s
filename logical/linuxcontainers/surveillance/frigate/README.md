@@ -23,7 +23,9 @@ enable auto update
 systemctl enable --now podman-auto-update.timer
 systemctl list-timers | grep podman-auto-update
 
-#### nvidia container toolkit
+#### nvidia container toolkit 
+https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/cdi-support.html
+
 sudo apt-get update && sudo apt-get install -y --no-install-recommends \
    ca-certificates \
    curl \
@@ -34,6 +36,8 @@ curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dear
     sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
     sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
+sudo sed -i -e '/experimental/ s/^#//g' /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
 sudo apt-get update
 
 export NVIDIA_CONTAINER_TOOLKIT_VERSION=1.20.0-1
@@ -43,7 +47,38 @@ export NVIDIA_CONTAINER_TOOLKIT_VERSION=1.20.0-1
       libnvidia-container-tools=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
       libnvidia-container1=${NVIDIA_CONTAINER_TOOLKIT_VERSION}
 
-sudo nvidia-ctk cdi generate --output=/etc/cdi/
+sudo nvidia-ctk config --set nvidia-container-runtime.log-level=debug
+sudo nvidia-ctk config --in-place \
+    --set nvidia-container-runtime.log-level=debug
+sudo nvidia-ctk config --in-place \
+    --set nvidia-container-runtime.log-level=debug \
+    --set nvidia-container-runtime.debug=/var/log/nvidia-container-runtime.log
+sudo nvidia-ctk config --in-place \
+    --set nvidia-container-runtime.runtimes=crun:runc
+
+
+#### podman
+https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/cdi-support.html
+sudo systemctl enable --now nvidia-cdi-refresh.path
+sudo systemctl enable --now nvidia-cdi-refresh.service
+sudo nvidia-ctk cdi generate --output=/var/run/cdi/nvidia.yaml
+
+##### clean up
+rm /etc/cdi/.yaml
+sudo nvidia-ctk cdi generate --output=/var/run/cdi/nvidia.yaml
+
+##### test
+podman run --rm --device nvidia.com/gpu=all \
+  ghcr.io/blakeblackshear/frigate:stable-tensorrt \
+  nvidia-smi -L
+
+podman run --rm --device nvidia.com/gpu=all \
+  ghcr.io/blakeblackshear/frigate:stable-tensorrt \
+  python3 -c "
+    import onnxruntime as ort
+    print('providers:', ort.get_available_providers())
+    import pycuda.autoinit  # or use torch if available
+"
 
 #### Fix DNS
   raw.lxc: |
