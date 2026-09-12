@@ -1,13 +1,13 @@
 name: llm
 description: A profile for running LLMs on a GPU worker with local models.
 config:
-  user.host: "core"
-  limits.cpu:
-    nodes: "0,1,2,3"
-    shares: "1024"
+  user.host: core
   limits.memory: 128GB
-  limits.kernel.memlock: unlimited
   limits.memory.swap: "false"
+  raw.lxc: |
+    lxc.apparmor.profile = unconfined
+    lxc.cap.drop =
+  security.nesting: "true"
 devices:
   eth0:
     name: eth0
