@@ -1,4 +1,4 @@
-name: torrent-stack
+name: torrent
 description: Torrent Server container profile
 config:
   user.host: "core"

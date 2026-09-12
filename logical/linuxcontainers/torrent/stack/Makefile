@@ -1,8 +1,8 @@
 HOST      := core
-CONTAINER := torrent-stack
+CONTAINER := torrent
 REMOTE    := $(HOST):$(CONTAINER)
 SERVICE   := torrent-stack.service
-STACK_DIR := /torrent/docker
+STACK_DIR := /torrent/stack
 COMPOSE_FILE := $(STACK_DIR)/docker-compose.yaml
 DOCKER_COMPOSE := docker compose -f $(COMPOSE_FILE)
 
@@ -28,6 +28,21 @@ start:
 	lxc exec $(REMOTE) -- systemctl enable --now $(SERVICE)
 	lxc exec $(REMOTE) -- systemctl status $(SERVICE) --no-pager
 
+# push the files the vm needs (lxc file push can't push directories),
+# then recreate changed containers
+sync:
+	lxc exec $(REMOTE) -- mkdir -p $(STACK_DIR)
+	lxc file push docker-compose.yaml $(REMOTE)$(STACK_DIR)/docker-compose.yaml
+	lxc file push torrent-stack.env $(REMOTE)$(STACK_DIR)/torrent-stack.env
+
+up:
+	lxc exec $(REMOTE) -- $(DOCKER_COMPOSE) up -d
+
+# one-time (or after editing the unit): install the systemd unit
+install-service:
+	lxc file push torrent-stack.service $(REMOTE)/etc/systemd/system/torrent-stack.service
+	lxc exec $(REMOTE) -- systemctl daemon-reload
+
 # --- Operations ---
 
 restart:
@@ -46,6 +61,9 @@ status:
 
 logs:
 	lxc exec $(REMOTE) -- $(DOCKER_COMPOSE) logs --tail=50
+
+logs-traefik:
+	lxc exec $(REMOTE) -- $(DOCKER_COMPOSE) logs traefik --tail=50
 
 shell:
 	lxc exec $(REMOTE) -- bash

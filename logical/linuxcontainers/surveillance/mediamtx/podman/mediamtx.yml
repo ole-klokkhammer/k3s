@@ -1,0 +1,57 @@
+# MediaMTX configuration - https://docs.mediamtx.io/configuration
+# reloaded only on start/restart: systemctl restart mediamtx
+
+logLevel: info
+
+# recordings on the HDD pool. Path chain:
+#   host /hdd/surveillance  ->  LXC /media  (profile device "media")
+#   LXC /media/mediamtx     ->  container /media/mediamtx  (quadlet Volume=)
+#
+pathDefaults:
+  record: yes
+  # absolute: $PWD-relative would write to the container root fs, not the mount
+  recordPath: /media/mediamtx/recordings/%path/%Y-%m-%d_%H-%M-%S-%f
+  recordFormat: fmp4
+  recordPartDuration: 1s
+  recordMaxPartSize: 50M
+  recordSegmentDuration: 1h
+  recordDeleteAfter: 7d
+
+# off by default in mediamtx v1.x - enable so the api/metrics ports below work
+api: true
+metrics: true
+
+# built-in playback server (VOD): HTTP access to recorded segments
+#   GET :9996/list?path=NAME[&start=RFC3339&end=RFC3339]
+#   GET :9996/get?path=NAME&start=RFC3339&duration=SECONDS[&format=fmp4|mp4]
+# (format=mp4 -> one seekable MP4, plays in browsers/VLC)
+playback: true
+
+# explicit addresses (these are also the defaults - spelled out so the
+# firewall picture is obvious)
+rtspAddress: :8554
+hlsAddress: :8888
+rtmpAddress: :1935
+srtAddress: :8890
+webrtcAddress: :8889
+apiAddress: :9997
+metricsAddress: :9998
+
+paths:
+  entrance_roof:
+    source: ${CAMERA_ENTRANCE_ROOF_SOURCE}
+    sourceProtocol: tcp
+    record: no
+  entrance_roof_sub:
+    source: ${CAMERA_ENTRANCE_ROOF_SUB_SOURCE}
+    sourceProtocol: tcp
+    record: yes
+    recordDeleteAfter: 7d
+
+  # entrance_door:
+  #   source: rtsp://CAM-IP-2:554/h264
+  #   recordOnStart: true
+
+  # catch-all: let cameras PUSH instead of being pulled.
+  # point the camera at  rtsp://surveillance.homelan:8554/<any-name>
+  # all: {}

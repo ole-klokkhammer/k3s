@@ -1,0 +1,23 @@
+[Unit]
+Description=MediaMTX media server
+After=network-online.target
+
+[Container]
+Network=host
+ContainerName=mediamtx
+Image=docker.io/bluenviron/mediamtx:latest
+Volume=/config/mediamtx:/config/mediamtx:rw
+Volume=/media/mediamtx:/media/mediamtx:rw
+Volume=/etc/localtime:/etc/localtime:ro
+Environment=TZ=Europe/Oslo
+EnvironmentFile=/config/mediamtx/.env
+Exec="./config/mediamtx/mediamtx.yml"
+
+[Service]
+Restart=always
+TimeoutStopSec=15
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

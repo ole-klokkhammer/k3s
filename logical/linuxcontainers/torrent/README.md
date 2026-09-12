@@ -12,9 +12,9 @@ sudo zfs set sync=disabled ssd/vm/torrent-zvol
 ### lxc 
 lxc profile create torrent-vm
 lxc profile edit torrent-vm
-lxc launch ubuntu:24.04 torrent-stack --vm -p default -p torrent-vm
+lxc launch ubuntu:24.04 torrent --vm -p default -p torrent-vm
 
-lxc exec torrent-stack -- sudo --login --user ubuntu
+lxc exec torrent -- sudo --login --user ubuntu
 lsblk
 sudo mkfs.ext4 /dev/sdb
 sudo mkdir -p /torrent
@@ -90,3 +90,15 @@ For public torrents, make sure DHT, PeX, and Local Peer Discovery are enabled.
 
 Tools -> Options -> Connection -> Listening Port
 You can keep this equal to the forwarded port, but this is secondary to the bind/proxy settings.
+
+#### traefik
+traefik runs inside the docker stack (see `stack/TRAEFIK.md`). it proxies the web uis:
+
+- http://qbittorrent.torrent.homelan
+- http://radarr.torrent.homelan
+- http://sonarr.torrent.homelan
+- http://lidarr.torrent.homelan
+- http://jackett.torrent.homelan
+- http://jellyseerr.torrent.homelan
+
+deploy with `make sync up` from `stack/`. dns in `stack/TRAEFIK.md`.

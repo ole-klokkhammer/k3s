@@ -7,8 +7,8 @@ Wants=network-online.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-WorkingDirectory=/torrent/docker/
-EnvironmentFile=/torrent/docker/torrent-stack.env
+WorkingDirectory=/torrent/stack/
+EnvironmentFile=/torrent/stack/torrent-stack.env
 ExecStart=docker compose up -d
 ExecStop=docker compose down
 TimeoutStartSec=0

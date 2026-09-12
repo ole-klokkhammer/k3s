@@ -33,6 +33,11 @@ services:
     volumes:
       - /hdd/media/downloads:/downloads
       - /torrent/config/qbittorrent:/config 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.torrent.homelan`)"
+      - "traefik.http.routers.qbittorrent.entrypoints=web"
+      - "traefik.http.services.qbittorrent.loadbalancer.server.url=http://127.0.0.1:8080"
 
   radarr:
     image: ghcr.io/linuxserver/radarr
@@ -45,6 +50,11 @@ services:
       - /torrent/config/radarr:/config
       - /hdd/media/movies:/movies
       - /hdd/media/downloads:/downloads 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.torrent.homelan`)"
+      - "traefik.http.routers.radarr.entrypoints=web"
+      - "traefik.http.services.radarr.loadbalancer.server.url=http://127.0.0.1:7878"
 
   sonarr:
     image: ghcr.io/linuxserver/sonarr
@@ -57,6 +67,11 @@ services:
       - /torrent/config/sonarr:/config
       - /hdd/media/tv:/tv
       - /hdd/media/downloads:/downloads 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.torrent.homelan`)"
+      - "traefik.http.routers.sonarr.entrypoints=web"
+      - "traefik.http.services.sonarr.loadbalancer.server.url=http://127.0.0.1:8989"
 
   lidarr:
     image: ghcr.io/linuxserver/lidarr
@@ -69,6 +84,11 @@ services:
       - /torrent/config/lidarr:/config
       - /hdd/music/data:/music
       - /hdd/media/downloads:/downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.lidarr.rule=Host(`lidarr.torrent.homelan`)"
+      - "traefik.http.routers.lidarr.entrypoints=web"
+      - "traefik.http.services.lidarr.loadbalancer.server.url=http://127.0.0.1:8686"
 
   jackett:
     image: ghcr.io/linuxserver/jackett
@@ -80,6 +100,11 @@ services:
     volumes:
       - /torrent/config/jackett:/config
       - /hdd/media/downloads:/downloads 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jackett.rule=Host(`jackett.torrent.homelan`)"
+      - "traefik.http.routers.jackett.entrypoints=web"
+      - "traefik.http.services.jackett.loadbalancer.server.url=http://127.0.0.1:9117"
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
@@ -90,6 +115,11 @@ services:
       - PORT=5055
     volumes:
       - /torrent/config/jellyseerr:/app/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.torrent.homelan`)"
+      - "traefik.http.routers.jellyseerr.entrypoints=web"
+      - "traefik.http.services.jellyseerr.loadbalancer.server.url=http://127.0.0.1:5055"
 
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr
@@ -101,3 +131,25 @@ services:
       - PORT=8191
       - HEADLESS=true
       - BROWSER_TIMEOUT=55000
+
+  traefik:
+    image: docker.io/library/traefik:v3.7
+    network_mode: "host"
+    restart: unless-stopped
+    command:
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.traefik.address=:8081
+      - --api.insecure=true
+      - --api.dashboard=true
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.allowEmptyServices=true
+      - --log.level=INFO
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`dashboard.torrent.homelan`)"
+      - "traefik.http.routers.dashboard.entrypoints=web"
+      - "traefik.http.services.dashboard.loadbalancer.server.url=http://127.0.0.1:8081"
