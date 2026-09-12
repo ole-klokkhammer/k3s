@@ -11,11 +11,13 @@ import logging
 import os
 from aiohttp import web
 from aiomqtt import Client, Will
-from logical.workloads.radios.bluetooth.bthome.src.app.bthome import decode
-from logical.workloads.radios.bluetooth.bthome.src.app.constants import (
+from logical.linuxcontainers.workloads.cloud0.radios.bluetooth.bthome.src.app.bthome import (
+    decode,
+)
+from logical.linuxcontainers.workloads.cloud0.radios.bluetooth.bthome.src.app.constants import (
     BTHOME_UUID_SHORT,
 )
-from logical.workloads.radios.bluetooth.bthome.src.app.integrations import (
+from logical.linuxcontainers.workloads.cloud0.radios.bluetooth.bthome.src.app.integrations import (
     publish_discovery,
 )
 

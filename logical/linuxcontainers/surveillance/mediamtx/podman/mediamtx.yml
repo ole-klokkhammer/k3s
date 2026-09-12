@@ -10,7 +10,7 @@ logLevel: info
 pathDefaults:
   record: yes
   # absolute: $PWD-relative would write to the container root fs, not the mount
-  recordPath: /media/mediamtx/recordings/%path/%Y-%m-%d_%H-%M-%S-%f
+  recordPath: /media/recordings/%path/%Y-%m-%d_%H-%M-%S-%f
   recordFormat: fmp4
   recordPartDuration: 1s
   recordMaxPartSize: 50M
@@ -53,5 +53,5 @@ paths:
   #   recordOnStart: true
 
   # catch-all: let cameras PUSH instead of being pulled.
-  # point the camera at  rtsp://surveillance.homelan:8554/<any-name>
+  # point the camera at  rtsp://mediamtx.homelan:8554/<any-name>
   # all: {}

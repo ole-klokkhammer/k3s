@@ -1,0 +1,27 @@
+[Unit]
+Description=Camera-still embedder (CLIP -> pgvector + NATS)
+After=network-online.target detector.service nats.service
+Wants=detector.service
+Requires=nats.service
+
+[Container]
+Network=host
+ContainerName=embedder
+Image=registry.linole.org/embedder:latest
+AddDevice=nvidia.com/gpu=all
+Volume=/config/embedder:/config/embedder:rw
+Volume=/media/detector:/media/detector:ro
+Volume=/etc/localtime:/etc/localtime:ro
+EnvironmentFile=/env/surveillance/embedder.env
+Environment=TZ=Europe/Oslo
+Exec="python3 /app/embedder.py"
+
+[Service]
+Restart=always
+RestartSec=5
+TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

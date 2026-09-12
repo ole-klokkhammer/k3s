@@ -1,0 +1,15 @@
+[Unit]
+Description=Podman Registry Login Service
+Wants=network-online.target systemd-resolved.service
+After=network-online.target systemd-resolved.service
+
+[Service]
+Type=oneshot
+User=root
+EnvironmentFile=/env/zot.env
+ExecStart=/usr/bin/podman login $REGISTRY_URL --username $REGISTRY_USERNAME --password $REGISTRY_PASSWORD
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

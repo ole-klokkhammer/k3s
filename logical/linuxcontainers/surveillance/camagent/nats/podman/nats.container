@@ -1,0 +1,18 @@
+[Unit]
+Description=NATS server - surveillance event bus
+After=network-online.target
+
+[Container]
+Network=host
+ContainerName=nats
+# fully-qualified image name (no unqualified-search registries in the LXC)
+Image=docker.io/nats:2.10-alpine
+
+[Service]
+Restart=always
+TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,24 @@
+[Unit]
+Description=Camera object detector (cats) - GPU YOLO via mediamtx
+After=network-online.target
+
+[Container]
+Network=host
+ContainerName=detector
+Image=registry.linole.org/detector:latest
+AddDevice=nvidia.com/gpu=all
+Volume=/config/detector:/config/detector:rw
+Volume=/media/detector:/media/detector:rw
+EnvironmentFile=/env/surveillance/detector.env
+Environment=TZ=Europe/Oslo
+Exec="python3 /app/detector.py"
+
+[Service]
+Restart=always
+RestartSec=5
+TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

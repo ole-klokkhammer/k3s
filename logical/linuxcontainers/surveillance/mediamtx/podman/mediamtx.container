@@ -5,13 +5,13 @@ After=network-online.target
 [Container]
 Network=host
 ContainerName=mediamtx
-Image=docker.io/bluenviron/mediamtx:latest
-Volume=/config/mediamtx:/config/mediamtx:rw
-Volume=/media/mediamtx:/media/mediamtx:rw
+Image=docker.io/bluenviron/mediamtx:1.21.0
+Volume=/config:/config:rw
+Volume=/media:/media:rw
 Volume=/etc/localtime:/etc/localtime:ro
 Environment=TZ=Europe/Oslo
-EnvironmentFile=/config/mediamtx/.env
-Exec="./config/mediamtx/mediamtx.yml"
+EnvironmentFile=/env/surveillance/mediamtx.env
+Exec="/config/mediamtx.yml"
 
 [Service]
 Restart=always

@@ -1,5 +1,5 @@
-name: surveillance
-description: Surveillance container profile
+name: camagent
+description: Camagent LXC - camera detection + query stack (GPU)
 config:
   user.host: core
   limits.cpu: "4"
@@ -27,6 +27,11 @@ devices:
     path: /media
     shift: "true"
     source: /hdd/surveillance
+    type: disk
+  env:
+    path: /env
+    shift: "true"
+    source: /ssd/appdata/env
     type: disk
   root:
     path: /

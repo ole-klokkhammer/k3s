@@ -1,0 +1,26 @@
+[Unit]
+Description=Camera query agent (NL -> tools -> LLM answer)
+After=network-online.target nats.service embedder.service
+Requires=nats.service
+
+[Container]
+Network=host
+ContainerName=query
+# CPU-only image: the LLM runs on the 5090 llm LXC, not here
+Image=registry.linole.org/query:latest
+Volume=/config/query:/config/query:rw
+Volume=/media/detector:/media/detector:ro
+Volume=/etc/localtime:/etc/localtime:ro
+EnvironmentFile=/env/surveillance/query.env
+Environment=TZ=Europe/Oslo
+Exec="python3 /app/agent.py"
+
+[Service]
+Restart=always
+RestartSec=5
+TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
